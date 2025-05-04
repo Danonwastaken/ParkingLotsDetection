@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/main.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
+</head>
+<body>
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+          <span class="fs-4">Система учета парковочного пространства</span>
+        </a>
+  
+        <nav class="nav nav-pills">
+          <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page">Главная</a>
+          <a href="/info" class="nav-link {% if request.path == '/info' %}active{% endif %}">Информация</a>
+        </nav>
+      </header>
+    
+    {% block body %}{% endblock %}
+</body>
+</html>

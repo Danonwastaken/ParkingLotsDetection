@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Система учета парковочного пространства
+{% endblock %}
+
+{% block body %}
+<div>
+    <div class="center-text">
+        <h1>Выберите необходимую "камеру" с парковочными местами</h1>
+    </div>
+    <div class="button-container">
+        <a href="/camera1" class="custom-button">
+            <div class="custom-button-text">Камера 1. Парковочная зона за торговым центром</div>
+            <img class="custom-button-image" src="static\images\1_lots.jpg" alt="Button Image">
+        </a>
+
+        <a href="/camera2" class="custom-button">
+            <div class="custom-button-text">Камера 2. Парковочная зона перед торговым центром</div>
+            <img class="custom-button-image" src="static\images\2_lots.jpg" alt="Button Image">
+        </a>
+        <a href="/camera3" class="custom-button">
+            <div class="custom-button-text">Камера 3. Парковочная зона слева торгового центра</div>
+            <img class="custom-button-image" src="static\images\3_lots.jpg" alt="Button Image">
+        </a>
+    </div>
+</div>
+{% endblock %}
