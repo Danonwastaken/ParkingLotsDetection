@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +8,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap">
 </head>
 <body>
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-          <span class="fs-4">Система учета парковочного пространства</span>
-        </a>
-  
-        <nav class="nav nav-pills">
+    <header class="header">
+        <a href="/" class="nav-pills">Система учета парковочного пространства</a>
+        <nav class="nav-pills">
           <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page">Главная</a>
           <a href="/info" class="nav-link {% if request.path == '/info' %}active{% endif %}">Информация</a>
+          <a href="/addCamera" class="nav-link {% if request.path == '/addCamera' %}active{% endif %}">Добавить камеру</a>
         </nav>
       </header>
     

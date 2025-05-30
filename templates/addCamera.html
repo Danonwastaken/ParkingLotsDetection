@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Добавление камеры
+{% endblock %}
+
+{% block body %}
+<div class="text-container"><h1>Загрузите видео или вставьте ссылку на прямую трансляцию</h1></div>
+<div class="global-zone">
+    <div class="add-video-form">
+        <div class="video-form">
+            <div class="add-video-zone" onclick="document.getElementById('video-upload').click()">
+                <input type="file" id="video-upload" accept=".mp4,.avi,.wav" style="display: none;">
+                <img class="add-video-button" id="video-icon" src="static\images\plus_black.png" alt="Plus logo">
+                <div class="add-video-text" id="add-video-text">Загрузите ваше видео</div>
+            </div>
+            <div class="add-video-or">ИЛИ</div>
+            <input class="add-input-box" id="stream-url" type="text" placeholder="Введите ссылку">
+        </div>
+        <div class="add-video-text" id="enter-password">Введите пароль</div>
+        <input class="add-input-box" id="password" type="'text" placeholder="Пароль">
+        <button class="button-upl" onclick="uploadVideo()">Загрузить</button>
+    </div>
+</div>
+
+<script>
+    const password = document.getElementById('password');
+    const videoUpload = document.getElementById('video-upload');
+    const videoIcon = document.getElementById('video-icon');
+    const addVideoText = document.getElementById('add-video-text');
+    const enterPassword = document.getElementById('enter-password');
+    const passw = "123"
+    videoUpload.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            videoIcon.src = "static/images/check_black.png";
+            addVideoText.textContent = "Видео выбрано"
+            window.selectedVideo = this.files[0];
+        }
+    });
+    
+
+    function uploadVideo() {
+        const inputUrl = document.getElementById('stream-url').value;
+        enterPassword.textContent = "Введите пароль";
+
+        if (password.value != passw) {
+            enterPassword.textContent = "Неверный пароль";
+            return;
+        }
+        if (window.selectedVideo) {
+            enterPassword.textContent = "Загрузка...";
+            const formData = new FormData();
+            formData.append('video', window.selectedVideo);
+            
+            fetch('/uploadVideo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `/markerCam?screenshot_name=${data.screenshot_name}`;
+                } else {
+                    enterPassword.textContent = 'Ошибка: ' + data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                enterPassword.textContent = 'Ошибка при загрузке видео';
+            });
+        } 
+        else if (inputUrl.match(/youtube\.com|youtu\.be/)) {
+            fetch('/uploadStream', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({url: inputUrl})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = `/markerCam?screenshot_name=${data.screenshot_name}`;
+            } else {
+                enterPassword.textContent = 'Ошибка: ' + data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            enterPassword.textContent = 'Ошибка при загрузке видео';
+            });
+        }
+        else {
+            enterPassword.textContent = 'Выберите видео, или вставьте ссылку';
+        }
+    }
+</script>
+
+{% endblock %}

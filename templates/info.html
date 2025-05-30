@@ -6,9 +6,11 @@
 
 {% block body %}
 <div class="text-container">Веб-интерфейс создавался с использованием фреймворка Flask.</div>
-<div class="text-container">За основу нейронной сети взята модель YOLO11 medium, до обученная на наборе данных "Vehicle Detection and Management".</div>
+<div class="text-container">За основу нейронной сети взята модель YOLO11 medium, дообученная на наборе данных "Vehicle Detection and Management".</div>
+<div class="text-container">В качестве базы данных используется СУБД PostgreSQL.</div>
 <div class="text-container"><h1>Возможности:</h1></div>
-<div class="text-container">1. Обработка видеоролика в реальном времени с выводом информации о парковочных местах.</div>
-<div class="text-container">2. Выгнузка отчёта по видеоролику, где указан номер кадра, количестество свободных мест и общее количество мест.</div>
+<div class="text-container">1. Обработка видеоролика в реальном времени с выводом информации о парковочных местах;</div>
+<div class="text-container">2. Выгнузка отчёта по видеоролику, и сохранение данных в базу данных;</div>
+<div class="text-container">3. Ручная разметка парковочных мест.</div>
 <img class="mtuci-logo" src="static\images\logo_color.svg" alt="MTUCI logo">
 {% endblock %}

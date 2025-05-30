@@ -7,22 +7,48 @@
 {% block body %}
 <div>
     <div class="center-text">
-        <h1>Выберите необходимую "камеру" с парковочными местами</h1>
+        <h1>Выберите необходимую камеру с парковочными местами</h1>
     </div>
     <div class="button-container">
-        <a href="/camera1" class="custom-button">
-            <div class="custom-button-text">Камера 1. Парковочная зона за торговым центром</div>
-            <img class="custom-button-image" src="static\images\1_lots.jpg" alt="Button Image">
-        </a>
-
-        <a href="/camera2" class="custom-button">
-            <div class="custom-button-text">Камера 2. Парковочная зона перед торговым центром</div>
-            <img class="custom-button-image" src="static\images\2_lots.jpg" alt="Button Image">
-        </a>
-        <a href="/camera3" class="custom-button">
-            <div class="custom-button-text">Камера 3. Парковочная зона слева торгового центра</div>
-            <img class="custom-button-image" src="static\images\3_lots.jpg" alt="Button Image">
-        </a>
+        {% for camera in cameras %}
+            <a href="{{ url_for('camera', camera_id=camera) }}" class="custom-button">
+                <div class="custom-button-text">id: {{camera}}</div>
+                <img class="custom-button-image" src="static\images\lots\{{camera}}_lots.jpg" alt="Button Image">
+                <div class="camera-stats">
+                    {% if stats.get(camera) %}
+                        <div class="stats-info">
+                            <div class="stats-label">Свободно:</div>
+                            <div class="stats-value-free" id="free-{{ camera }}">{{ stats[camera]['free'] }}</div>
+                            <div class="stats-separator">/</div>
+                            <div class="stats-value-total" id="total-{{ camera }}">{{ stats[camera]['total'] }}</div>
+                        </div>
+                    {% else %}
+                        <div class="stats-info">Статистика недоступна</div>
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
     </div>
 </div>
+
+<script>
+function updateParkingStats() {
+        fetch('/get_stats')
+            .then(response => response.json())
+            .then(data => {
+                for (const camera in data) {
+                    const freeElement = document.getElementById(`free-${camera}`);
+                    const totalElement = document.getElementById(`total-${camera}`);
+                    if (freeElement && totalElement) {
+                        freeElement.textContent = data[camera].free;
+                        totalElement.textContent = data[camera].total;
+                    }
+                }
+            })
+            .catch(error => console.error('Ошибка при загрузке статистики:', error));
+    }
+
+    setInterval(updateParkingStats, 10000); 
+    updateParkingStats();
+</script>
 {% endblock %}

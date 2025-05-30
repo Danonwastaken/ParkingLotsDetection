@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Система учета парковочного пространства
+{% endblock %}
+
+{% block body %}
+<div class="global-zone1">
+    <h1 class="text-container">Разметка парковочных мест</h1>
+    <div class="text-container">
+        Инструкция: Зажмите левую кнопку мыши в точке, где хотите начать размечать парковочную зону. Отпустите левую кнопку мыши, чтобы закончить разметку текущей области. Нажмите правую кнопку мыши в размеченной зоне, чтобы её удалить. Нажмите клавишу "s", чтобы сохранить координаты парковок
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+        let drawing = false;
+        let startX, startY;
+        let rectangles = [];
+        
+
+        img.src = 'static/images/lots/{{ screenshot_name }}';
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            draw();
+        };
+        img.onerror = () => {
+            console.error('Не удалось загрузить фотографию');
+            ctx.fillText('Не удалось загрузить фотографию', 10, 50);
+        };
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (img.complete && img.naturalWidth !== 0) {
+                ctx.drawImage(img, 0, 0);
+            }
+            rectangles.forEach(function(rect) {
+                ctx.beginPath();
+                ctx.rect(rect.startX, rect.startY, rect.endX - rect.startX, rect.endY - rect.startY);
+                ctx.strokeStyle = 'yellow';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        canvas.addEventListener('mousedown', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x =  Math.floor(e.clientX - rect.left);
+            const y =  Math.floor(e.clientY - rect.top);
+
+            if (e.button === 0) { 
+                drawing = true;
+                startX = x;
+                startY = y;
+            } else if (e.button === 2) { 
+                for (let i = rectangles.length - 1; i >= 0; i--) {
+                    const r = rectangles[i];
+                    if (x >= r.startX && x <= r.endX && y >= r.startY && y <= r.endY) {
+                        rectangles.splice(i, 1);
+                        draw();
+                        break;
+                    }
+                }
+            } 
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            if (e.button === 0 && drawing) {
+                const rect = canvas.getBoundingClientRect();
+                const x =  Math.floor(e.clientX - rect.left);
+                const y =  Math.floor(e.clientY - rect.top);
+                rectangles.push({
+                    startX: Math.min(startX, x),
+                    startY: Math.min(startY, y),
+                    endX: Math.max(startX, x),
+                    endY: Math.max(startY, y)
+                });
+                drawing = false;
+                draw();
+                console.log(`Начальные координаты: (${startX}, ${startY}), конечные координаты: (${x}, ${y})`);
+            }
+        });
+
+        canvas.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        function saveRectangles() {
+            const data = rectangles.map(function(rect) {
+                return {
+                    start: { ix: rect.startX, iy: rect.startY },
+                    end: { x: rect.endX, y: rect.endY }
+                };
+            });
+            const screenshotPath = img.src;
+            const fileName = screenshotPath.split('/').pop().replace('.jpg', '');
+            const jsonName = fileName + '.json';
+            
+            fetch('/saveRectangles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    filename: jsonName,
+                    data: data
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                if (result.success) {
+                    window.location.href = `/`
+                } else {
+                    console.log('Ошибка при сохранении: ' + result.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
+        }
+
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 'c') {
+                rectangles = [];
+                draw();
+            }
+            if (e.key.toLowerCase() === 's') {
+                saveRectangles();
+            }
+        });
+    </script>
+</div>
+
+{% endblock %}
