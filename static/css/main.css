@@ -265,7 +265,7 @@ body {
 }
 
 .button-upl {
-    color: #121213;
+    color: #ffffff;
     padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
     font-weight: 500;
@@ -290,6 +290,7 @@ body {
     align-items: center;
     gap: 5px;
     font-size: 1.1rem;
+    color: #ffffff;
 }
 
 .stats-label {
@@ -307,4 +308,8 @@ body {
 .stats-separator {
     color: #ffffff;
     margin: 0 2px;
+}
+
+a {
+    text-decoration: none;
 }

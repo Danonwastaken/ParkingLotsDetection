@@ -27,10 +27,10 @@ last_time = {}
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host='localhost',
-        database='postgres',
-        user='postgres',
-        password='8210'
+        host='host',
+        database='database',
+        user='user',
+        password='password'
     )
     return conn
 
