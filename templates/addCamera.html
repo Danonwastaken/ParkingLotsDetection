@@ -29,7 +29,22 @@
     const videoIcon = document.getElementById('video-icon');
     const addVideoText = document.getElementById('add-video-text');
     const enterPassword = document.getElementById('enter-password');
-    const passw = "123"
+    let passw = null
+    fetch('static/pass.json') 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить файл');
+            }
+            return response.json();
+        })
+        .then(data => {
+            passw = data.password;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            enterPassword.textContent = 'Ошибка загрузки данных';
+        });
+
     videoUpload.addEventListener('change', function(e) {
         if (this.files && this.files[0]) {
             videoIcon.src = "static/images/check_black.png";
